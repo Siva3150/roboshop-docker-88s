@@ -1,0 +1,84 @@
+services:
+ mongodb: 
+  build: 
+   context: ./mongodb
+   dockerfile: Dockerfile
+  image: siva3150/mongodb:v1 
+  container_name: mongodb 
+  volumes:
+    - mongodb:/data/db
+ redis:
+  build: ./redis
+  image: siva3150/redis:v1 
+  container_name: redis 
+  volumes:
+    - redis:/data
+ mysql:
+  build: ./mysql 
+  image: siva3150/mysql:v1 
+  container_name: mysql 
+  volumes:
+    - mysql:/var/lib/mysql
+ rabbitmq:
+  build: ./rabbitmq
+  image: siva3150/rabbitmq:v1 
+  container_name: rabbitmq 
+  volumes:
+    - rabbitmq:/var/lib/rabbitmq
+ catalogue:
+  build: ./catalogue
+  image: siva3150/catalogue:v1 
+  container_name: catalogue
+  depends_on: 
+  - mongodb
+ user:
+  build: ./user
+  image: siva3150/user:v1 
+  container_name: user 
+  depends_on:
+  - redis
+  - mongodb
+ cart:
+  build: ./cart
+  image: siva3150/cart:v1 
+  container_name: cart 
+  depends_on:
+  - redis
+  - catalogue
+ shipping:
+  build: ./shipping
+  image: siva3150/shipping:v1 
+  container_name: shipping
+  depends_on:
+  - mysql
+  - cart
+ payment:
+  build: ./payment
+  image: siva3150/payment:v1 
+  container_name: payment
+  depends_on:
+  - rabbitmq 
+  - cart
+  - user
+ frontend:
+  build: ./frontend
+  image: siva3150/frontend:v1
+  container_name: frontend
+  ports:
+    - "80:80"
+  depends_on:
+  - catalogue
+  - user
+  - cart
+  - shipping
+  - payment
+networks:
+  default:
+   driver: bridge 
+   name: roboshop 
+   external: false  # true if you have created network manually using docker network command
+volumes:
+  mongodb: # docker volume create mongodb. /var/lib/docker/volumes/mongodb/_data
+  redis:
+  mysql:
+  rabbitmq:
