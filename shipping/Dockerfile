@@ -7,7 +7,7 @@ RUN mvn clean package && \
 
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /opt/server 
-RUN groupadd -S roboshop && useradd -S roboshop -G roboshop && \ 
+RUN addgroup -S roboshop && adduser -S roboshop -G roboshop && \ 
     chown -R roboshop:roboshop /opt/server 
 EXPOSE 8080 
 ENV CART_ENDPOINT="cart:8080" \ 
