@@ -7,6 +7,7 @@ instana({
     }
 });
 
+// change to test image layers, again
 const { MongoClient, ObjectId } = require('mongodb');
 const bodyParser = require('body-parser');
 const express = require('express');
